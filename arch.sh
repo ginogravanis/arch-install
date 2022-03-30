@@ -195,8 +195,10 @@ function install_xorg() {
 
 function intall_github_pkg() {
    local pkg="$1"
-   runuser -l $user -c "git clone https://github.com/ginogravanis/$pkg.git dev/$pkg && cd dev/$pkg && makepkg"
-   pacman --noconfirm -U "/home/$user/dev/$pkg/$pkg*.zst"
+   runuser -l $user -c "git clone https://github.com/ginogravanis/$pkg.git dev/$pkg"
+   grep 'depends.*=' "/home/$user/dev/$pkg/PKGBUILD" | sed -E 's/.*depends.*\(([^()]*)\).*/\1/p' | sed "s/'//g" | xargs pacman -S --asdeps --noconfirm --needed
+   runuser -l $user -c "cd dev/$pkg && makepkg"
+   pacman -U --noconfirm /home/$user/dev/$pkg/$pkg*.zst
 }
 
 function install_extras() {
