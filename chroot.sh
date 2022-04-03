@@ -77,7 +77,7 @@ function setup_user() {
 
    echo -e "%wheel   ALL=(ALL)   ALL" > /etc/sudoers.d/wheel
 
-   useradd -m -G sys,wheel "${username}"
+   useradd -m -G sys,wheel,power "${username}"
    echo "${username}:${username}" | chpasswd
    passwd -e "${username}"
    mv /root/tmp/arch.sh "/home/${username}/"
@@ -86,6 +86,8 @@ function setup_user() {
 
    passwd -d root
    sed -i -e "s|/root:.*|/root:/sbin/nologin|" /etc/passwd
+
+   pacman -S --noconfirm --needed polkit
 }
 
 function install_manpages() {
