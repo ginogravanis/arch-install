@@ -176,6 +176,7 @@ function install_desktop_environment() {
    intall_github_pkg dmenu
    intall_github_pkg st
    intall_github_pkg dwm
+   intall_github_pkg pacman-contrib-gino
    install_extras
 }
 
