@@ -203,7 +203,16 @@ function intall_github_pkg() {
 }
 
 function install_extras() {
+   pacman -S --noconfirm --needed \
+      pipewire \
+      pipewire-alsa \
+      pipewire-pulse \
+      pipewire-jack \
+      alsa-utils
    pacman -S --noconfirm --needed acpi iw feh
+   pacman -S --noconfirm --needed bluez bluez-utils
+   systemctl enable bluetooth
+   pacman -S --noconfirm --needed firefox
 }
 
 if [[ ${BASH_SOURCE[0]} == ${0} ]]; then
