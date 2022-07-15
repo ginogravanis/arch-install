@@ -209,7 +209,7 @@ function install_extras() {
       pipewire-pulse \
       pipewire-jack \
       alsa-utils
-   pacman -S --noconfirm --needed acpi iw feh
+   pacman -S --noconfirm --needed acpi feh
    pacman -S --noconfirm --needed bluez bluez-utils
    systemctl enable bluetooth
    pacman -S --noconfirm --needed firefox
