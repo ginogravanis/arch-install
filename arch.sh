@@ -177,6 +177,7 @@ function install_desktop_environment() {
    intall_github_pkg st
    intall_github_pkg dwm
    intall_github_pkg pacman-contrib-gino
+   install_bluetooth
    install_extras
 }
 
@@ -202,6 +203,12 @@ function intall_github_pkg() {
    pacman -U --noconfirm /home/$user/dev/$pkg/$pkg*.zst
 }
 
+function install_bluetooth() {
+   pacman -S --noconfirm --needed bluez bluez-utils
+   sed -i -e "s/#AutoEnable=.*/AutoEnable=true/" /etc/bluetooth/main.conf
+   systemctl enable bluetooth
+}
+
 function install_extras() {
    pacman -S --noconfirm --needed \
       pipewire \
@@ -210,8 +217,6 @@ function install_extras() {
       pipewire-jack \
       alsa-utils
    pacman -S --noconfirm --needed acpi feh redshift
-   pacman -S --noconfirm --needed bluez bluez-utils
-   systemctl enable bluetooth
    pacman -S --noconfirm --needed firefox
 }
 
