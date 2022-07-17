@@ -19,7 +19,12 @@ function setup_locale() {
    echo "en_GB.UTF-8 UTF-8" >> /etc/locale.gen
    locale-gen
 
-   echo "KEYMAP=de-latin1" > /etc/vconsole.conf
+   # Duplicate de-latin1 keyboard layout, but remap Caps lock to Ctrl
+   local keymapsdir=/usr/share/kbd/keymaps/i386/qwertz/
+   gzip -cd "$keymapsdir/de-latin1.map.gz"            \
+      | sed -e "s/\(keycode\s*58 = \).*/\1Control/"   \
+      | gzip > "$keymapsdir/de-latin1-nocapslock.map.gz"
+   echo "KEYMAP=de-latin1-nocapslock" > /etc/vconsole.conf
 }
 
 function setup_network() {
