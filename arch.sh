@@ -173,10 +173,10 @@ function install_vim() {
 
 function install_desktop_environment() {
    install_xorg
-   intall_github_pkg dmenu
-   intall_github_pkg st
-   intall_github_pkg dwm
-   intall_github_pkg pacman-contrib-gino
+   install_github_pkg dmenu
+   install_github_pkg st
+   install_github_pkg dwm
+   install_github_pkg pacman-contrib-gino
    install_bluetooth
    install_extras
 }
@@ -195,7 +195,7 @@ function install_xorg() {
    localectl set-x11-keymap de
 }
 
-function intall_github_pkg() {
+function install_github_pkg() {
    local pkg="$1"
    runuser -l $user -c "git clone https://github.com/ginogravanis/$pkg.git dev/$pkg"
    grep 'depends.*=' "/home/$user/dev/$pkg/PKGBUILD" | sed -E 's/.*depends.*\(([^()]*)\).*/\1/p' | sed "s/'//g" | xargs pacman -S --asdeps --noconfirm --needed
