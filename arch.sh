@@ -216,7 +216,7 @@ function install_extras() {
       pipewire-pulse \
       pipewire-jack \
       alsa-utils
-   pacman -S --noconfirm --needed acpi feh redshift
+   pacman -S --noconfirm --needed acpi feh redshift xclip
    pacman -S --noconfirm --needed firefox
 }
 
