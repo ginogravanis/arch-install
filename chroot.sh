@@ -93,6 +93,9 @@ function setup_user() {
    sed -i -e "s|/root:.*|/root:/sbin/nologin|" /etc/passwd
 
    pacman -S --noconfirm --needed polkit
+
+   # Allow all users to run dmesg
+   echo kernel.dmesg_restrict=0 | sudo tee -a /etc/sysctl.d/99-dmesg.conf
 }
 
 function install_manpages() {
