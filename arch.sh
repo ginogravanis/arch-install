@@ -29,7 +29,7 @@ function main_menu() {
       "2. Install base system" \
       "3. Reboot" \
       "4. Setup dotfiles" \
-      "5. Install Vim" \
+      "5. Install Neovim" \
       "6. Install desktop environment"
    )
 
@@ -49,8 +49,8 @@ function main_menu() {
             setup_dotfiles
             main_menu
             ;;
-         "5. Install Vim")
-            install_vim
+         "5. Install Neovim")
+            install_neovim
             main_menu
             ;;
          "6. Install desktop environment")
@@ -165,10 +165,8 @@ function setup_dotfiles() {
    runuser -l $user -c "$dot config --local status.showUntrackedFiles no"
 }
 
-function install_vim() {
-   pacman -S --noconfirm --needed tmux vim
-   runuser -l $user -c "git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim"
-   runuser -l $user -c "vim +PluginInstall +qa"
+function install_neovim() {
+   pacman -S --noconfirm --needed tmux neovim
 }
 
 function install_desktop_environment() {
