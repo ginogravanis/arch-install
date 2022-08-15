@@ -166,7 +166,7 @@ function setup_dotfiles() {
 }
 
 function install_neovim() {
-   pacman -S --noconfirm --needed tmux neovim
+   pacman -S --noconfirm --needed tmux ripgrep neovim
 }
 
 function install_desktop_environment() {
