@@ -190,6 +190,9 @@ function install_xorg() {
       xorg-xsetroot \
       libxkbcommon \
       gnu-free-fonts \
+      noto-fonts \
+      noto-fonts-emoji \
+      noto-fonts-extra \
       openssh
 
    localectl set-x11-keymap de
