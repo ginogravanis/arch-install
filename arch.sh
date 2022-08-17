@@ -158,7 +158,7 @@ function install_base_system() {
 }
 
 function setup_dotfiles() {
-   pacman -S --noconfirm git tk
+   pacman -S --noconfirm git tk slock
    runuser -l $user -c "git clone --bare https://github.com/ginogravanis/dotfiles.git ~/.dotfiles.git"
    dot="git --git-dir=\$HOME/.dotfiles.git/ --work-tree=\$HOME"
    runuser -l $user -c "$dot checkout -f main"
