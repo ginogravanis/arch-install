@@ -22,7 +22,7 @@ function setup_locale() {
    # Duplicate de-latin1 keyboard layout, but remap Caps lock to Ctrl
    local keymapsdir=/usr/share/kbd/keymaps/i386/qwertz/
    gzip -cd "$keymapsdir/de-latin1.map.gz"            \
-      | sed -e "s/\(keycode\s*58 = \).*/\1Control/"   \
+      | sed -e "s/\(keycode\s*58 =\).*/\1 Control/"   \
       | gzip > "$keymapsdir/de-latin1-nocapslock.map.gz"
    echo "KEYMAP=de-latin1-nocapslock" > /etc/vconsole.conf
 }
@@ -90,7 +90,7 @@ function setup_user() {
    chown "${username}:${username}" "/home/${username}/arch.sh"
 
    passwd -d root
-   sed -i -e "s|/root:.*|/root:/sbin/nologin|" /etc/passwd
+   sed -ie "s|/root:.*|/root:/sbin/nologin|" /etc/passwd
 
    pacman -S --noconfirm --needed polkit
 

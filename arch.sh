@@ -72,8 +72,9 @@ function ensure_deps() {
 
 	timedatectl set-ntp true
 
-   sed -i -e "/ParallelDownloads/{s/^#//}" /etc/pacman.conf
-   sed -i -e "/\[community\]/{s/^#//;n;s/^#//}" /etc/pacman.conf
+   local uncomment="s/^#//"
+   sed -ie "/ParallelDownloads/{$uncomment}" /etc/pacman.conf
+   sed -ie "/\[community\]/{$uncomment;n;$uncomment}" /etc/pacman.conf
    pacman -Sy
 	for pkg in ${deps_exist}
 	do
@@ -211,7 +212,7 @@ function install_github_pkg() {
 
 function install_bluetooth() {
    pacman -S --noconfirm --needed bluez bluez-utils
-   sed -i -e "s/#AutoEnable=.*/AutoEnable=true/" /etc/bluetooth/main.conf
+   sed -ie "s/#AutoEnable=.*/AutoEnable=true/" /etc/bluetooth/main.conf
    systemctl enable bluetooth
 }
 
