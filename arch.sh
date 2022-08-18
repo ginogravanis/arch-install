@@ -72,7 +72,8 @@ function ensure_deps() {
 
 	timedatectl set-ntp true
 
-   sed -i -e "s/#ParallelDownloads/ParallelDownloads/" /etc/pacman.conf
+   sed -i -e "/ParallelDownloads/{s/^#//}" /etc/pacman.conf
+   sed -i -e "/\[community\]/{s/^#//;n;s/^#//}" /etc/pacman.conf
    pacman -Sy
 	for pkg in ${deps_exist}
 	do
