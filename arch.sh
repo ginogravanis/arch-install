@@ -167,7 +167,11 @@ function setup_dotfiles() {
 }
 
 function install_neovim() {
-   pacman -S --noconfirm --needed tmux ripgrep neovim
+   pacman -S --noconfirm --needed \
+      ttf-nerd-fonts-symbols-common \
+      tmux \
+      ripgrep \
+      neovim \
 }
 
 function install_desktop_environment() {
@@ -192,7 +196,7 @@ function install_xorg() {
       noto-fonts \
       noto-fonts-emoji \
       noto-fonts-extra \
-      openssh
+      openssh \
 
    localectl set-x11-keymap de
 }
