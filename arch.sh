@@ -173,6 +173,11 @@ function install_neovim() {
       tmux \
       ripgrep \
       neovim \
+      bash-language-server \
+      python-lsp-server \
+      npm \
+
+   npm i -g elm elm-test elm-format @elm-tooling/elm-language-server
 }
 
 function install_desktop_environment() {
