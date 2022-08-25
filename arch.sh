@@ -160,7 +160,8 @@ function install_base_system() {
 }
 
 function setup_dotfiles() {
-   pacman -S --noconfirm git tk slock
+   pacman -S --noconfirm git
+   pacman -S --noconfirm --asdeps tk
    runuser -l $user -c "git clone --bare https://github.com/ginogravanis/dotfiles.git ~/.dotfiles.git"
    dot="git --git-dir=\$HOME/.dotfiles.git/ --work-tree=\$HOME"
    runuser -l $user -c "$dot checkout -f main"
@@ -227,9 +228,13 @@ function install_extras() {
       pipewire-alsa \
       pipewire-pulse \
       pipewire-jack \
-      alsa-utils
-   pacman -S --noconfirm --needed acpi feh redshift xclip
-   pacman -S --noconfirm --needed firefox
+      alsa-utils \
+      acpi \
+      xclip \
+      feh \
+      redshift \
+      firefox \
+      slock
 }
 
 if [[ ${BASH_SOURCE[0]} == ${0} ]]; then
