@@ -8,8 +8,9 @@ deps_exist=("dialog" "fdisk")
 deps_latest=("archlinux-keyring")
 
 function err() {
-   local red=$(tput setaf 1)
-   local reset=$(tput sgr0)
+   local red reset
+   red="$(tput setaf 1)"
+   reset="$(tput sgr0)"
    echo -e "${red}[Error]${reset} $1" >&2
 }
 
@@ -21,7 +22,8 @@ function dialog_cmd() {
 }
 
 function main_menu() {
-   local selected_entry=$(dialog_cmd \
+   local selected_entry
+   selected_entry=$(dialog_cmd \
       --title "Main Menu" \
       --no-items \
       --menu "" 0 0 0 \
@@ -76,36 +78,37 @@ function ensure_deps() {
    sed -ie "/ParallelDownloads/{$uncomment}" /etc/pacman.conf
    sed -ie "/\[community\]/{$uncomment;n;$uncomment}" /etc/pacman.conf
    pacman -Sy
-	for pkg in ${deps_exist}
+	for pkg in "${deps_exist[@]}"
 	do
-		if ! pacman -Qe ${pkg} >/dev/null
+		if ! pacman -Qe "${pkg}" >/dev/null
 		then
-			pacman -S --noconfirm --needed ${deps_exist}
+			pacman -S --noconfirm --needed "${deps_exist[@]}"
 			break
 		fi
 	done
 
-   for pkg in ${deps_latest}
+   for pkg in "${deps_latest[@]}"
    do
       if ! diff \
-         <(pacman -Qi ${pkg} | grep "^Version") \
-         <(pacman -Si ${pkg} | grep "^Version")
+         <(pacman -Qi "${pkg}" | grep "^Version") \
+         <(pacman -Si "${pkg}" | grep "^Version")
       then
-         pacman -S --noconfirm --needed ${pkg}
+         pacman -S --noconfirm --needed "${pkg}"
       fi
    done
 }
 
 function format_disk() {
    read -r -a devices <<< \
-      $(lsblk -dnpo NAME,SIZE,TYPE \
+      "$(lsblk -dnpo NAME,SIZE,TYPE \
       | grep 'disk$' \
       | awk '{print $1,$2}' \
-      | tr '\n' '\t')
-   local disk=$(dialog_cmd \
+      | tr '\n' '\t')"
+   local disk
+   disk=$(dialog_cmd \
       --title "Format Disk" \
       --menu "Target disk will be partitioned into a 512MB EFI partition, and a main partition taking up the remaining disk space." 15 60 0 \
-      ${devices[@]} \
+      "${devices[@]}" \
    )
    unset devices
 
@@ -130,26 +133,27 @@ n
 w
 EOF
 
-	yes | mkfs.fat -F32 ${disk}1
-	yes | mkfs.ext4 ${disk}2
+	yes | mkfs.fat -F32 "${disk}1"
+	yes | mkfs.ext4 "${disk}2"
 
-	mount ${disk}2 /mnt
+	mount "${disk}2" /mnt
 	mkdir -p /mnt/efi
-	mount ${disk}1 /mnt/efi
+	mount "${disk}1" /mnt/efi
 }
 
 function install_base_system() {
-   local hostname=$(dialog_cmd --inputbox "Hostname" 0 0)
+   local hostname
+   hostname=$(dialog_cmd --inputbox "Hostname" 0 0)
 
    pacstrap /mnt base base-devel linux linux-firmware
 
    genfstab -U /mnt >> /mnt/etc/fstab
-   echo ${hostname} >> /mnt/etc/hostname
+   echo "${hostname}" >> /mnt/etc/hostname
 
    # TODO Download chroot.sh
    local script_dir="/root/tmp"
    mkdir -p /mnt/${script_dir}
-   cp $(cd $(dirname $0) && pwd)/*.sh /mnt/${script_dir}/
+   cp "$(cd "$(dirname "$0")" && pwd)"/*.sh /mnt/${script_dir}/
    chmod +x /mnt/${script_dir}/*.sh
 
    arch-chroot /mnt bash ${script_dir}/chroot.sh
@@ -162,10 +166,10 @@ function install_base_system() {
 function setup_dotfiles() {
    pacman -S --noconfirm git
    pacman -S --noconfirm --asdeps tk
-   runuser -l $user -c "git clone --bare https://github.com/ginogravanis/dotfiles.git ~/.dotfiles.git"
+   runuser -l "$user" -c "git clone --bare https://github.com/ginogravanis/dotfiles.git ~/.dotfiles.git"
    dot="git --git-dir=\$HOME/.dotfiles.git/ --work-tree=\$HOME"
-   runuser -l $user -c "$dot checkout -f main"
-   runuser -l $user -c "$dot config --local status.showUntrackedFiles no"
+   runuser -l "$user" -c "$dot checkout -f main"
+   runuser -l "$user" -c "$dot config --local status.showUntrackedFiles no"
 }
 
 function install_neovim() {
@@ -211,10 +215,10 @@ function install_xorg() {
 
 function install_github_pkg() {
    local pkg="$1"
-   runuser -l $user -c "git clone https://github.com/ginogravanis/$pkg.git dev/$pkg"
+   runuser -l "$user" -c "git clone https://github.com/ginogravanis/$pkg.git dev/$pkg"
    grep 'depends.*=' "/home/$user/dev/$pkg/PKGBUILD" | sed -E 's/.*depends.*\(([^()]*)\).*/\1/p' | sed "s/'//g" | xargs pacman -S --asdeps --noconfirm --needed
-   runuser -l $user -c "cd dev/$pkg && makepkg"
-   pacman -U --noconfirm /home/$user/dev/$pkg/$pkg*.zst
+   runuser -l "$user" -c "cd dev/$pkg && makepkg"
+   pacman -U --noconfirm "/home/$user/dev/$pkg/$pkg*.zst"
 }
 
 function install_bluetooth() {
@@ -239,7 +243,7 @@ function install_extras() {
       slock
 }
 
-if [[ ${BASH_SOURCE[0]} == ${0} ]]; then
+if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
    ensure_deps
    main_menu
 fi

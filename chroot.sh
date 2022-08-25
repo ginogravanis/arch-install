@@ -2,7 +2,7 @@
 
 set -e
 
-source "$(dirname $0)/arch.sh"
+source "$(dirname "$0")/arch.sh"
 
 function setup_clock() {
    # TODO Let user specify timezone
@@ -29,9 +29,11 @@ function setup_locale() {
 
 function setup_network() {
    hostname=$(cat /etc/hostname)
-   echo "127.0.0.1   localhost" >> /etc/hosts
-   echo "::1         localhost" >> /etc/hosts
-   echo "127.0.1.1   $hostname" >> /etc/hosts
+   {
+      echo "127.0.0.1   localhost"
+      echo "::1         localhost"
+      echo "127.0.1.1   $hostname"
+   } >> /etc/hosts
 
    # TODO Alternatives? systemd-networkd?
    pacman -S --noconfirm --needed networkmanager # dhcpcd
@@ -39,11 +41,11 @@ function setup_network() {
 }
 
 function update_cpu_microcode() {
-   if cat /proc/cpuinfo | grep "^vendor_id" | grep -q "Intel" && \
-      cat /proc/cpuinfo | grep "^model name" | grep -q "Intel(R)"; then
+   if grep "^vendor_id" /proc/cpuinfo | grep -q "Intel" && \
+      grep "^model name" /proc/cpuinfo | grep -q "Intel(R)"; then
       microcode_pkg="intel-ucode"
-   elif cat /proc/cpuinfo | grep "^vendor_id" | grep -q "AMD" && \
-      cat /proc/cpuinfo | grep "^model name" | grep -q "AMD"; then
+   elif grep "^vendor_id" /proc/cpuinfo | grep -q "AMD" && \
+       grep "^model name" /proc/cpuinfo | grep -q "AMD"; then
       microcode_pkg="amd-ucode"
    else
       cpu_vendor=$(dialog_cmd \
@@ -77,7 +79,8 @@ function install_bootloader() {
 }
 
 function setup_user() {
-   local username=$(dialog_cmd --inputbox "User name" 0 0)
+   local username
+   username=$(dialog_cmd --inputbox "User name" 0 0)
    dialog_cmd --msgbox "Your initial password is the same as your username. You will be asked to change it on your first login." 0 0
 
    echo -e "%wheel   ALL=(ALL)   ALL" > /etc/sudoers.d/wheel
@@ -103,7 +106,7 @@ function install_manpages() {
 }
 
 
-if [[ ${BASH_SOURCE[0]} == ${0} ]]; then
+if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
    setup_clock
    setup_locale
    setup_network
