@@ -231,6 +231,7 @@ function install_extras() {
       alsa-utils \
       acpi \
       xclip \
+      unclutter \
       feh \
       redshift \
       firefox \
