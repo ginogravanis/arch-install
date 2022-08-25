@@ -175,6 +175,7 @@ function install_neovim() {
       ripgrep \
       neovim \
       bash-language-server \
+      shellcheck \
       python-lsp-server \
       npm \
 
