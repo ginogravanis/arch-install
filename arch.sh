@@ -183,7 +183,12 @@ function install_neovim() {
       python-lsp-server \
       npm \
 
-   npm i -g elm elm-test elm-format @elm-tooling/elm-language-server
+   npm i -g \
+      elm \
+      elm-test \
+      elm-format \
+      @elm-tooling/elm-language-server \
+      vscode-langservers-extracted
 }
 
 function install_desktop_environment() {
