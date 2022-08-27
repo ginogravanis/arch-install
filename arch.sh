@@ -182,6 +182,7 @@ function install_neovim() {
       shellcheck \
       python-lsp-server \
       npm \
+      jq \
 
    npm i -g \
       elm \
