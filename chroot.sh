@@ -4,7 +4,7 @@ set -e
 
 source "$(dirname "$0")/arch.sh"
 
-function setup_clock() {
+setup_clock() {
    # TODO Let user specify timezone
    ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
    timedatectl set-ntp true
@@ -12,7 +12,7 @@ function setup_clock() {
    hwclock --systohc
 }
 
-function setup_locale() {
+setup_locale() {
    echo "LANG=en_US.UTF-8" >> /etc/locale.conf
    echo "LC_TIME=en_GB.UTF-8" >> /etc/locale.conf
    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
@@ -27,7 +27,7 @@ function setup_locale() {
    echo "KEYMAP=de-latin1-nocapslock" > /etc/vconsole.conf
 }
 
-function setup_network() {
+setup_network() {
    hostname=$(cat /etc/hostname)
    {
       echo "127.0.0.1   localhost"
@@ -40,7 +40,7 @@ function setup_network() {
    systemctl enable NetworkManager
 }
 
-function update_cpu_microcode() {
+update_cpu_microcode() {
    if grep "^vendor_id" /proc/cpuinfo | grep -q "Intel" && \
       grep "^model name" /proc/cpuinfo | grep -q "Intel(R)"; then
       microcode_pkg="intel-ucode"
@@ -68,17 +68,17 @@ function update_cpu_microcode() {
    pacman -S --noconfirm ${microcode_pkg}
 }
 
-function make_inital_ramdisk() {
+make_inital_ramdisk() {
    mkinitcpio -P
 }
 
-function install_bootloader() {
+install_bootloader() {
    pacman -S --noconfirm grub efibootmgr
    grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB
    grub-mkconfig -o /boot/grub/grub.cfg
 }
 
-function setup_user() {
+setup_user() {
    local username
    username=$(dialog_cmd --inputbox "User name" 0 0)
    dialog_cmd --msgbox "Your initial password is the same as your username. You will be asked to change it on your first login." 0 0
@@ -101,7 +101,7 @@ function setup_user() {
    echo kernel.dmesg_restrict=0 | sudo tee -a /etc/sysctl.d/99-dmesg.conf
 }
 
-function install_manpages() {
+install_manpages() {
    pacman -S --noconfirm --needed man-db
 }
 

@@ -7,21 +7,21 @@ user=$(logname)
 deps_exist=("dialog" "fdisk")
 deps_latest=("archlinux-keyring")
 
-function err() {
+err() {
    local red reset
    red="$(tput setaf 1)"
    reset="$(tput sgr0)"
    echo -e "${red}[Error]${reset} $1" >&2
 }
 
-function dialog_cmd() {
+dialog_cmd() {
    dialog \
    --stdout \
    --backtitle "Arch Linux Setup" \
    "$@"
 }
 
-function main_menu() {
+main_menu() {
    local selected_entry
    selected_entry=$(dialog_cmd \
       --title "Main Menu" \
@@ -65,7 +65,7 @@ function main_menu() {
    fi
 }
 
-function ensure_deps() {
+ensure_deps() {
 	if ! test -e "/sys/firmware/efi/efivars"; then
       err "/sys/firmware/efi/efivars not found."
 		err "This script only works on EFI systems."
@@ -98,7 +98,7 @@ function ensure_deps() {
    done
 }
 
-function format_disk() {
+format_disk() {
    read -r -a devices <<< \
       "$(lsblk -dnpo NAME,SIZE,TYPE \
       | grep 'disk$' \
@@ -141,7 +141,7 @@ EOF
 	mount "${disk}1" /mnt/efi
 }
 
-function install_base_system() {
+install_base_system() {
    local hostname
    hostname=$(dialog_cmd --inputbox "Hostname" 0 0)
 
@@ -163,7 +163,7 @@ function install_base_system() {
    echo "   $ sudo ~/arch.sh"
 }
 
-function setup_dotfiles() {
+setup_dotfiles() {
    pacman -S --noconfirm git
    pacman -S --noconfirm --asdeps tk
    runuser -l "$user" -c "git clone --bare https://github.com/ginogravanis/dotfiles.git ~/.dotfiles.git"
@@ -172,7 +172,7 @@ function setup_dotfiles() {
    runuser -l "$user" -c "$dot config --local status.showUntrackedFiles no"
 }
 
-function install_neovim() {
+install_neovim() {
    pacman -S --noconfirm --needed \
       ttf-nerd-fonts-symbols-common \
       tmux \
@@ -192,7 +192,7 @@ function install_neovim() {
       vscode-langservers-extracted
 }
 
-function install_desktop_environment() {
+install_desktop_environment() {
    install_xorg
    install_github_pkg dmenu
    install_github_pkg st
@@ -202,7 +202,7 @@ function install_desktop_environment() {
    install_extras
 }
 
-function install_xorg() {
+install_xorg() {
    pacman -S --noconfirm --needed \
       xorg-server \
       xorg-drivers \
@@ -219,7 +219,7 @@ function install_xorg() {
    localectl set-x11-keymap de
 }
 
-function install_github_pkg() {
+install_github_pkg() {
    local pkg="$1"
    runuser -l "$user" -c "git clone https://github.com/ginogravanis/$pkg.git dev/$pkg"
    grep 'depends.*=' "/home/$user/dev/$pkg/PKGBUILD" | sed -E 's/.*depends.*\(([^()]*)\).*/\1/p' | sed "s/'//g" | xargs pacman -S --asdeps --noconfirm --needed
@@ -227,13 +227,13 @@ function install_github_pkg() {
    pacman -U --noconfirm "/home/$user/dev/$pkg/$pkg*.zst"
 }
 
-function install_bluetooth() {
+install_bluetooth() {
    pacman -S --noconfirm --needed bluez bluez-utils
    sed -ie "s/#AutoEnable=.*/AutoEnable=true/" /etc/bluetooth/main.conf
    systemctl enable bluetooth
 }
 
-function install_extras() {
+install_extras() {
    pacman -S --noconfirm --needed \
       pipewire \
       pipewire-alsa \
