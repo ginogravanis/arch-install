@@ -246,7 +246,8 @@ install_extras() {
       feh \
       redshift \
       firefox \
-      slock
+      slock \
+      rclone
 }
 
 if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
