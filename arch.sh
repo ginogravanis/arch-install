@@ -183,6 +183,8 @@ install_neovim() {
       python-lsp-server \
       npm \
       jq \
+      bear \
+      clang \
 
    npm i -g \
       elm \
