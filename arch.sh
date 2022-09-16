@@ -247,6 +247,7 @@ install_extras() {
       unclutter \
       feh \
       redshift \
+      xorg-xbacklight \
       firefox \
       slock \
       rclone
