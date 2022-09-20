@@ -245,7 +245,8 @@ install_extras() {
       acpi \
       xclip \
       unclutter \
-      feh \
+      xwallpaper \
+      sxiv \
       redshift \
       xorg-xbacklight \
       firefox \
