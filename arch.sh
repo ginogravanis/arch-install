@@ -250,7 +250,8 @@ install_extras() {
       xorg-xbacklight \
       firefox \
       slock \
-      rclone
+      rclone\
+      zathura-pdf-mupdf
 }
 
 if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
