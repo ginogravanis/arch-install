@@ -175,6 +175,8 @@ setup_dotfiles() {
 install_neovim() {
    pacman -S --noconfirm --needed \
       ttf-nerd-fonts-symbols-common \
+      ttf-joypixels \
+      ttf-font-awesome \
       tmux \
       ripgrep \
       neovim \
