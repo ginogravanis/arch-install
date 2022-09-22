@@ -254,7 +254,12 @@ install_extras() {
       firefox \
       slock \
       rclone\
-      zathura-pdf-mupdf
+      zathura-pdf-mupdf \
+      mpv \
+      youtube-dl \
+      mpd \
+      mpc \
+      ncmpcpp
 }
 
 if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
