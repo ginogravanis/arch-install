@@ -18,13 +18,20 @@ setup_locale() {
    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
    echo "en_GB.UTF-8 UTF-8" >> /etc/locale.gen
    locale-gen
+}
 
+setup_tty() {
    # Duplicate de-latin1 keyboard layout, but remap Caps lock to Ctrl
    local keymapsdir=/usr/share/kbd/keymaps/i386/qwertz/
    gzip -cd "$keymapsdir/de-latin1.map.gz"            \
       | sed -e "s/\(keycode\s*58 =\).*/\1 Control/"   \
       | gzip > "$keymapsdir/de-latin1-nocapslock.map.gz"
    echo "KEYMAP=de-latin1-nocapslock" > /etc/vconsole.conf
+
+   # tty font
+   pacman -S --noconfirm --needed terminus-font
+   echo "FONT=ter-118b" >> /etc/vconsole.conf
+   echo "FONT_MAP=8859-1" >> /etc/vconsole.conf
 }
 
 setup_network() {
@@ -109,6 +116,7 @@ install_manpages() {
 if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
    setup_clock
    setup_locale
+   setup_tty
    setup_network
    update_cpu_microcode
    make_inital_ramdisk
