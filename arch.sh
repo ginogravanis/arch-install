@@ -179,6 +179,7 @@ install_neovim() {
       ttf-font-awesome \
       tmux \
       ripgrep \
+      fd \
       neovim \
       bash-language-server \
       shellcheck \
