@@ -240,6 +240,7 @@ install_bluetooth() {
 
 install_extras() {
    pacman -S --noconfirm --needed \
+      bash-completion \
       pipewire \
       pipewire-alsa \
       pipewire-pulse \
