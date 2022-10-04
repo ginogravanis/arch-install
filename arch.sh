@@ -150,7 +150,6 @@ install_base_system() {
    genfstab -U /mnt >> /mnt/etc/fstab
    echo "${hostname}" >> /mnt/etc/hostname
 
-   # TODO Download chroot.sh
    local script_dir="/root/tmp"
    mkdir -p /mnt/${script_dir}
    cp "$(cd "$(dirname "$0")" && pwd)"/*.sh /mnt/${script_dir}/
