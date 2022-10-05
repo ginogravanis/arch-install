@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -ex
-
 user=$(logname)
 
 deps_exist=(
@@ -384,20 +382,26 @@ chroot() {
    install_manpages
 }
 
-main() {
-   ensure_deps
+usage="Usage: $(basename "$0") [chroot]"
 
+main() {
    case "$1" in
       "chroot")
-         chroot
+         local entrypoint=chroot
          ;;
       "")
-         main_menu
+         local entrypoint=main_menu
          ;;
       *)
-         err "Invalid argument: $1"
+         err "Invalid arguments: $*"
+         echo "$usage"
+         exit 1
          ;;
    esac
+
+   set -ex
+   ensure_deps
+   $entrypoint
 }
 
 main "$@"
