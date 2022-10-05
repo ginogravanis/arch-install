@@ -380,16 +380,20 @@ chroot() {
    install_manpages
 }
 
-case "$1" in
-   "chroot")
-      ensure_deps
-      chroot
-      ;;
-   "")
-      ensure_deps
-      main_menu
-      ;;
-   *)
-      err "Invalid argument: $1"
-      ;;
-esac
+main() {
+   ensure_deps
+
+   case "$1" in
+      "chroot")
+         chroot
+         ;;
+      "")
+         main_menu
+         ;;
+      *)
+         err "Invalid argument: $1"
+         ;;
+   esac
+}
+
+main "$@"
