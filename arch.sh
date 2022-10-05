@@ -4,7 +4,10 @@ set -ex
 
 user=$(logname)
 
-deps_exist=("dialog" "fdisk")
+deps_exist=(
+   "dialog"
+   "util-linux" # fdisk
+)
 deps_latest=("archlinux-keyring")
 
 err() {
