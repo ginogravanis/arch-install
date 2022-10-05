@@ -101,18 +101,17 @@ ensure_deps() {
 }
 
 format_disk() {
+   local devices disk
    read -r -a devices <<< \
       "$(lsblk -dnpo NAME,SIZE,TYPE \
       | grep 'disk$' \
       | awk '{print $1,$2}' \
       | tr '\n' '\t')"
-   local disk
    disk=$(dialog_cmd \
       --title "Format Disk" \
       --menu "Target disk will be partitioned into a 512MB EFI partition, and a main partition taking up the remaining disk space." 15 60 0 \
       "${devices[@]}" \
    )
-   unset devices
 
 	if lsblk -np -o MOUNTPOINTS "$disk" | grep -q .; then
 		err "Mounted volumes detected for device $disk. Please unmount and try again."
