@@ -231,10 +231,14 @@ install_xorg() {
 
 install_github_pkg() {
    local pkg="$1"
-   runuser -l "$user" -c "git clone https://github.com/ginogravanis/$pkg.git dev/$pkg"
-   grep 'depends.*=' "/home/$user/dev/$pkg/PKGBUILD" | sed -E 's/.*depends.*\(([^()]*)\).*/\1/p' | sed "s/'//g" | xargs pacman -S --asdeps --noconfirm --needed
-   runuser -l "$user" -c "cd dev/$pkg && makepkg"
-   pacman -U --noconfirm "/home/$user/dev/$pkg"/*.zst
+   local dir="/home/$user/dev/$pkg"
+   runuser -l "$user" -c "git clone https://github.com/ginogravanis/$pkg.git $dir"
+   grep 'depends.*=' "$dir/PKGBUILD" \
+      | sed -E 's/.*depends.*\(([^()]*)\).*/\1/p' \
+      | sed "s/'//g" \
+      | xargs pacman -S --asdeps --noconfirm --needed
+   runuser -l "$user" -c "cd $dir && makepkg"
+   pacman -U --noconfirm "$dir"/*.zst
 }
 
 install_bluetooth() {
