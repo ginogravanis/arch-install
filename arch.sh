@@ -29,7 +29,7 @@ main_menu() {
       --menu "" 0 0 0 \
       "1. Format disk" \
       "2. Install base system" \
-      "3. Reboot" \
+      "3. Post-installation setup" \
       "4. Setup dotfiles" \
       "5. Install Neovim" \
       "6. Install desktop environment"
@@ -44,8 +44,9 @@ main_menu() {
          "2. Install base system")
             install_base_system
             ;;
-         "3. Reboot")
-            reboot
+         "3. Post-installation setup")
+            post_install_setup
+            main_menu
             ;;
          "4. Setup dotfiles")
             setup_dotfiles
@@ -71,8 +72,6 @@ ensure_deps() {
 		err "This script only works on EFI systems."
 		exit 1
 	fi
-
-	timedatectl set-ntp true
 
    local uncomment="s/^#//"
    sed -ie "/ParallelDownloads/{$uncomment}" /etc/pacman.conf
@@ -152,14 +151,19 @@ install_base_system() {
 
    local script_dir="/root/tmp"
    mkdir -p /mnt/${script_dir}
-   cp "$(cd "$(dirname "$0")" && pwd)"/*.sh /mnt/${script_dir}/
-   chmod +x /mnt/${script_dir}/*.sh
+   cp "$(realpath "$0")" /mnt/${script_dir}/
+   chmod +x "/mnt/${script_dir}/$(basename "$0")"
 
-   arch-chroot /mnt bash ${script_dir}/chroot.sh
+   arch-chroot /mnt bash "${script_dir}/arch.sh" chroot
 
    echo "Base system installation comlete."
    echo "Please reboot into your new system and rerun this script to continue:"
    echo "   $ sudo ~/arch.sh"
+}
+
+post_install_setup() {
+   timedatectl set-ntp true
+   hwclock --systohc
 }
 
 setup_dotfiles() {
@@ -263,7 +267,127 @@ install_extras() {
       ncmpcpp
 }
 
-if [[ ${BASH_SOURCE[0]} == "${0}" ]]; then
-   ensure_deps
-   main_menu
-fi
+setup_locale() {
+   ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
+   echo "LANG=en_US.UTF-8" >> /etc/locale.conf
+   echo "LC_TIME=en_GB.UTF-8" >> /etc/locale.conf
+   echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+   echo "en_GB.UTF-8 UTF-8" >> /etc/locale.gen
+   locale-gen
+}
+
+setup_tty() {
+   # Duplicate de-latin1 keyboard layout, but remap Caps lock to Ctrl
+   local keymapsdir="/usr/share/kbd/keymaps/i386/qwertz/"
+   gzip -cd "$keymapsdir/de-latin1.map.gz"            \
+      | sed -e "s/\(keycode\s*58 =\).*/\1 Control/"   \
+      | gzip > "$keymapsdir/de-latin1-nocapslock.map.gz"
+   echo "KEYMAP=de-latin1-nocapslock" > /etc/vconsole.conf
+
+   # tty font
+   pacman -S --noconfirm --needed terminus-font
+   echo "FONT=ter-118b" >> /etc/vconsole.conf
+   echo "FONT_MAP=8859-1" >> /etc/vconsole.conf
+}
+
+setup_network() {
+   hostname=$(cat /etc/hostname)
+   {
+      echo "127.0.0.1   localhost"
+      echo "::1         localhost"
+      echo "127.0.1.1   $hostname"
+   } >> /etc/hosts
+
+   # TODO Alternatives? systemd-networkd?
+   pacman -S --noconfirm --needed networkmanager # dhcpcd
+   systemctl enable NetworkManager
+}
+
+update_cpu_microcode() {
+   if grep "^vendor_id" /proc/cpuinfo | grep -q "Intel" && \
+      grep "^model name" /proc/cpuinfo | grep -q "Intel(R)"; then
+      microcode_pkg="intel-ucode"
+   elif grep "^vendor_id" /proc/cpuinfo | grep -q "AMD" && \
+       grep "^model name" /proc/cpuinfo | grep -q "AMD"; then
+      microcode_pkg="amd-ucode"
+   else
+      cpu_vendor=$(dialog_cmd \
+         --no-items \
+         --title "Select CPU vendor" \
+         --menu "Can't detect CPU vendor. Please select:" 0 0 0 \
+         "AMD" "Intel"
+      )
+      case $cpu_vendor in
+         "AMD")
+            microcode_pkg="amd-ucode"
+            ;;
+         "Intel")
+            microcode_pkg="intel-ucode"
+            ;;
+         *)
+            exit
+      esac
+   fi
+   pacman -S --noconfirm ${microcode_pkg}
+}
+
+make_inital_ramdisk() {
+   mkinitcpio -P
+}
+
+install_bootloader() {
+   pacman -S --noconfirm grub efibootmgr
+   grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB
+   grub-mkconfig -o /boot/grub/grub.cfg
+}
+
+setup_user() {
+   local username
+   username=$(dialog_cmd --inputbox "User name" 0 0)
+   dialog_cmd --msgbox "Your initial password is the same as your username. You will be asked to change it on your first login." 0 0
+
+   echo -e "%wheel   ALL=(ALL)   ALL" > /etc/sudoers.d/wheel
+
+   useradd -m -G sys,wheel,power "${username}"
+   echo "${username}:${username}" | chpasswd
+   passwd -e "${username}"
+   mv /root/tmp/arch.sh "/home/${username}/"
+   rm -r /root/tmp
+   chown "${username}:${username}" "/home/${username}/arch.sh"
+
+   passwd -d root
+   sed -ie "s|/root:.*|/root:/sbin/nologin|" /etc/passwd
+
+   pacman -S --noconfirm --needed polkit
+
+   echo kernel.dmesg_restrict=0 | tee -a /etc/sysctl.d/99-dmesg.conf
+}
+
+install_manpages() {
+   pacman -S --noconfirm --needed man-db
+}
+
+chroot() {
+   setup_locale
+   setup_tty
+   setup_network
+   update_cpu_microcode
+   make_inital_ramdisk
+   install_bootloader
+   setup_user
+   install_manpages
+}
+
+case "$1" in
+   "chroot")
+      ensure_deps
+      chroot
+      ;;
+   "")
+      ensure_deps
+      main_menu
+      ;;
+   *)
+      err "Invalid argument: $1"
+      ;;
+esac
