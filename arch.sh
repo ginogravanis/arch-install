@@ -204,9 +204,9 @@ install_neovim() {
 
 install_desktop_environment() {
    install_xorg
-   install_github_pkg dmenu
-   install_github_pkg st
-   install_github_pkg dwm
+   install_github_pkg dmenu-pkg
+   install_github_pkg st-pkg
+   install_github_pkg dwm-pkg
    install_github_pkg pacman-contrib-gino
    install_bluetooth
    install_extras
@@ -234,7 +234,7 @@ install_github_pkg() {
    runuser -l "$user" -c "git clone https://github.com/ginogravanis/$pkg.git dev/$pkg"
    grep 'depends.*=' "/home/$user/dev/$pkg/PKGBUILD" | sed -E 's/.*depends.*\(([^()]*)\).*/\1/p' | sed "s/'//g" | xargs pacman -S --asdeps --noconfirm --needed
    runuser -l "$user" -c "cd dev/$pkg && makepkg"
-   pacman -U --noconfirm "/home/$user/dev/$pkg/$pkg*.zst"
+   pacman -U --noconfirm "/home/$user/dev/$pkg"/*.zst
 }
 
 install_bluetooth() {
