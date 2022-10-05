@@ -223,8 +223,9 @@ install_xorg() {
       noto-fonts-emoji \
       noto-fonts-extra \
       openssh \
+      libxkbcommon \
 
-   localectl set-x11-keymap de
+   localectl set-x11-keymap de "" "" caps:ctrl_modifier
 }
 
 install_github_pkg() {
