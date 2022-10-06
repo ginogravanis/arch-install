@@ -171,6 +171,7 @@ setup_dotfiles() {
    pacman -S --noconfirm --asdeps tk
    runuser -l "$user" -c "git clone --bare https://github.com/ginogravanis/dotfiles.git ~/.dotfiles.git"
    dot="git --git-dir=\$HOME/.dotfiles.git/ --work-tree=\$HOME"
+   rm /home/"$user"/.bash_*
    runuser -l "$user" -c "$dot checkout -f main"
    runuser -l "$user" -c "$dot config --local status.showUntrackedFiles no"
 }
