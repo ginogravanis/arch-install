@@ -3,20 +3,21 @@
 tmpdir=$(mktemp -d)
 trap 'rm -rf "$tmpdir"' EXIT
 
-if timedatectl status | grep 'NTP service: inactive'
+pacman -Sy
+if ! command -v git
 then
-   timedatectl set-ntp true
-   sleep 1
+   if ! pacman -S --noconfirm git
+   then
+      pacman-keys --init
+      pacman -Syy
+      if ! pacman -S --noconfirm git
+      then
+         >&2 echo "Failed to install git. Please install git and retry."
+         exit 1
+      fi
+   fi
 fi
 
-if timedatectl status | grep 'synchronized: no'
-then
-   systemctl restart systemd-timesyncd
-   sleep 1
-fi
-
-sudo pacman -Sy
-sudo pacman -S --noconfirm --needed git
 git clone --depth 1 https://github.com/ginogravanis/arch-install.git "$tmpdir"
 
 sudo "$tmpdir/arch.sh"
