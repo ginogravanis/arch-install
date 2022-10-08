@@ -68,6 +68,12 @@ main_menu() {
 }
 
 ensure_deps() {
+   if [ "$(whoami)" != "root" ]
+   then
+      err "Script must be run as root. Try: sudo $(basename "$0")"
+      exit 1
+   fi
+
 	if ! test -e "/sys/firmware/efi/efivars"; then
       err "/sys/firmware/efi/efivars not found."
 		err "This script only works on EFI systems."
