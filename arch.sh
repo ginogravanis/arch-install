@@ -375,6 +375,8 @@ setup_user() {
    pacman -S --noconfirm --needed polkit
 
    echo kernel.dmesg_restrict=0 | tee -a /etc/sysctl.d/99-dmesg.conf
+
+   echo -e "\nsudo ~/arch.sh" >> "/home/${username}/.bashrc"
 }
 
 install_manpages() {
