@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 user=$(logname)
 
 deps_exist=(
@@ -79,6 +81,8 @@ ensure_deps() {
 		err "This script only works on EFI systems."
 		exit 1
 	fi
+
+   set -x
 
    local uncomment="s/^#//"
    sed -ie "/ParallelDownloads/{$uncomment};s/5/10/" /etc/pacman.conf
@@ -405,7 +409,6 @@ main() {
          ;;
    esac
 
-   set -ex
    ensure_deps
    $entrypoint
 }
