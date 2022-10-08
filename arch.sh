@@ -75,7 +75,7 @@ ensure_deps() {
 	fi
 
    local uncomment="s/^#//"
-   sed -ie "/ParallelDownloads/{$uncomment}" /etc/pacman.conf
+   sed -ie "/ParallelDownloads/{$uncomment};s/5/10/" /etc/pacman.conf
    sed -ie "/\[community\]/{$uncomment;n;$uncomment}" /etc/pacman.conf
    pacman -Sy
 	for pkg in "${deps_exist[@]}"
