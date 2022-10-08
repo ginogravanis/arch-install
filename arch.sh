@@ -156,9 +156,7 @@ install_base_system() {
 
    arch-chroot /mnt bash "${script_dir}/arch.sh" chroot
 
-   echo "Base system installation comlete."
-   echo "Please reboot into your new system and rerun this script to continue:"
-   echo "   $ sudo ~/arch.sh"
+   reboot
 }
 
 post_install_setup() {
