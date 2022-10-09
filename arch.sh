@@ -88,15 +88,6 @@ ensure_deps() {
    sed -ie "/ParallelDownloads/{$uncomment};s/5/10/" /etc/pacman.conf
    sed -ie "/\[community\]/{$uncomment;n;$uncomment}" /etc/pacman.conf
    pacman -Sy
-	for pkg in "${deps_exist[@]}"
-	do
-		if ! pacman -Qe "${pkg}" >/dev/null
-		then
-			pacman -S --noconfirm --needed "${deps_exist[@]}"
-			break
-		fi
-	done
-
    for pkg in "${deps_latest[@]}"
    do
       if ! diff \
@@ -106,6 +97,15 @@ ensure_deps() {
          pacman -S --noconfirm --needed "${pkg}"
       fi
    done
+
+	for pkg in "${deps_exist[@]}"
+	do
+		if ! pacman -Qe "${pkg}" >/dev/null
+		then
+			pacman -S --noconfirm --needed "${deps_exist[@]}"
+			break
+		fi
+	done
 }
 
 format_disk() {
