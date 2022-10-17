@@ -272,6 +272,8 @@ install_dev_suite() {
       docker-compose \
       qemu-desktop \
       virt-manager
+
+   usermod -aG docker,libvirt "$(logname)"
 }
 
 setup_locale() {
