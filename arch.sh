@@ -201,6 +201,7 @@ install_desktop_environment() {
    install_github_pkg pacman-contrib-gino
    install_bluetooth
    install_extras
+   install_dev_suite
 }
 
 install_xorg() {
@@ -215,7 +216,6 @@ install_xorg() {
       noto-fonts \
       noto-fonts-emoji \
       noto-fonts-extra \
-      openssh \
       libxkbcommon \
 
    localectl set-x11-keymap de "" "" caps:ctrl_modifier
@@ -263,6 +263,15 @@ install_extras() {
       mpd \
       mpc \
       ncmpcpp
+}
+
+install_dev_suite() {
+   pacman -S --noconfirm --needed \
+      openssh \
+      docker \
+      docker-compose \
+      qemu-desktop \
+      virt-manager
 }
 
 setup_locale() {
