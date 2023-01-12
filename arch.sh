@@ -177,20 +177,7 @@ install_neovim() {
       ripgrep \
       fd \
       neovim \
-      bash-language-server \
-      shellcheck \
-      python-lsp-server \
-      npm \
-      jq \
-      bear \
-      clang \
-
-   npm i -g \
-      elm \
-      elm-test \
-      elm-format \
-      @elm-tooling/elm-language-server \
-      vscode-langservers-extracted
+      jq
 }
 
 install_desktop_environment() {
