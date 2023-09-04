@@ -130,8 +130,8 @@ EOF
 	yes | mkfs.ext4 "${disk}2"
 
 	mount "${disk}2" /mnt
-	mkdir -p /mnt/efi
-	mount "${disk}1" /mnt/efi
+	mkdir -p /mnt/boot
+	mount "${disk}1" /mnt/boot
 }
 
 install_base_system() {
@@ -333,7 +333,7 @@ make_inital_ramdisk() {
 
 install_bootloader() {
    pacman -S --noconfirm grub efibootmgr
-   grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB
+   grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
    grub-mkconfig -o /boot/grub/grub.cfg
 }
 
