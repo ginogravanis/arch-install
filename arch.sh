@@ -352,7 +352,7 @@ setup_user() {
    chown "${username}:${username}" "/home/${username}/arch.sh"
 
    passwd -d root
-   sed -ie "s|/root:.*|/root:/sbin/nologin|" /etc/passwd
+   sed -ie "s|/root:.*|/root:/usr/bin/nologin|" /etc/passwd
 
    pacman -S --noconfirm --needed polkit
 
