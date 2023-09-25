@@ -105,13 +105,13 @@ format_disk() {
       "${devices[@]}" \
    )
 
-	if lsblk -np -o MOUNTPOINTS "$disk" | grep -q .; then
-		err "Mounted volumes detected for device $disk. Please unmount and try again."
-		lsblk -p -o NAME,MOUNTPOINTS "$disk" >&2
-		exit 1
-	fi
+   if lsblk -np -o MOUNTPOINTS "$disk" | grep -q .; then
+      err "Mounted volumes detected for device $disk. Please unmount and try again."
+      lsblk -p -o NAME,MOUNTPOINTS "$disk" >&2
+      exit 1
+   fi
 
-	fdisk -W always -w always "$disk" << EOF
+   fdisk -W always -w always "$disk" << EOF
 g
 n
 
@@ -126,15 +126,15 @@ n
 w
 EOF
 
-	boot_partition=$(lsblk -nlp -o NAME | grep "$disk" | grep '1$')
-	root_partition=$(lsblk -nlp -o NAME | grep "$disk" | grep '2$')
+   boot_partition=$(lsblk -nlp -o NAME | grep "$disk" | grep '1$')
+   root_partition=$(lsblk -nlp -o NAME | grep "$disk" | grep '2$')
 
-	yes | mkfs.fat -F32 "${boot_partition}"
-	yes | mkfs.ext4 "${root_partition}"
+   yes | mkfs.fat -F32 "${boot_partition}"
+   yes | mkfs.ext4 "${root_partition}"
 
-	mount "${root_partition}" /mnt
-	mkdir -p /mnt/boot
-	mount "${boot_partition}" /mnt/boot
+   mount "${root_partition}" /mnt
+   mkdir -p /mnt/boot
+   mount "${boot_partition}" /mnt/boot
 }
 
 install_base_system() {
