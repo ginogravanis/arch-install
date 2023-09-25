@@ -126,12 +126,15 @@ n
 w
 EOF
 
-	yes | mkfs.fat -F32 "${disk}1"
-	yes | mkfs.ext4 "${disk}2"
+	boot_partition=$(lsblk -nlp -o NAME | grep "$disk" | grep '1$')
+	root_partition=$(lsblk -nlp -o NAME | grep "$disk" | grep '2$')
 
-	mount "${disk}2" /mnt
+	yes | mkfs.fat -F32 "${boot_partition}"
+	yes | mkfs.ext4 "${root_partition}"
+
+	mount "${root_partition}" /mnt
 	mkdir -p /mnt/boot
-	mount "${disk}1" /mnt/boot
+	mount "${boot_partition}" /mnt/boot
 }
 
 install_base_system() {
