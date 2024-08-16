@@ -249,7 +249,6 @@ install_extras() {
       rclone\
       zathura-pdf-mupdf \
       mpv \
-      youtube-dl \
       mpd \
       mpc \
       ncmpcpp
@@ -259,11 +258,9 @@ install_dev_suite() {
    pacman -S --noconfirm --needed \
       openssh \
       docker \
-      docker-compose \
-      qemu-desktop \
-      virt-manager
+      docker-compose
 
-   usermod -aG docker,libvirt "$(logname)"
+   usermod -aG docker "$(logname)"
 }
 
 setup_locale() {
