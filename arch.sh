@@ -251,7 +251,8 @@ install_extras() {
       mpv \
       mpd \
       mpc \
-      ncmpcpp
+      ncmpcpp \
+      htop
 }
 
 install_dev_suite() {
