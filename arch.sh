@@ -87,6 +87,7 @@ ensure_deps() {
    local uncomment="s/^#//"
    sed -ie "/ParallelDownloads/{$uncomment};s/5/10/" /etc/pacman.conf
    sed -ie "/\[community\]/{$uncomment;n;$uncomment}" /etc/pacman.conf
+   sed -ie "/#Color/{$uncomment}" /etc/pacman.conf
    pacman -Sy
    pacman -S --noconfirm --needed "${deps_latest[@]}"
    pacman -S --noconfirm --needed "${deps_exist[@]}"
